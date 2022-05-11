@@ -1,0 +1,23 @@
+version: '3'
+services:
+  node-app:
+    build: .
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./:/app
+    environment:
+      - NODE_ENV=development
+      - PORT=4000
+    env_file:
+      - ./.env
+    command: npm run dev
+  postgres-runner:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=abcduser
+      - POSTGRES_PASSWORD=abcdpsw
+    volumes:
+      - /home/sree/Documents/Docker-test/node-docker-postgres-03/pg-files/:/var/lib/postgresql/data
