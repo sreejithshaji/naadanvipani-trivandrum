@@ -10,3 +10,12 @@ services:
     env_file:
       - ./.env
     command: npm run start
+  postgres-runner:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=abcduser
+      - POSTGRES_PASSWORD=abcdpsw
+    volumes:
+      - /home/sree/Documents/Docker-test/node-docker-postgres-03/pg-files/:/var/lib/postgresql/data
