@@ -20,4 +20,4 @@ services:
       - POSTGRES_USER=abcduser
       - POSTGRES_PASSWORD=abcdpsw
     volumes:
-      - /home/sree/Documents/Docker-test/node-docker-postgres-03/pg-files/:/var/lib/postgresql/data
+      - /home/sree/Documents/Works/naadanvipani/pg-files/:/var/lib/postgresql/data
