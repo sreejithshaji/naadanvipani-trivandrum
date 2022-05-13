@@ -28,5 +28,8 @@ const userRoutes = require('./api/routes/user');
 app.use('/user' ,  userRoutes );
 
 
+const cartRoutes = require('./api/routes/cart');
+app.use('/cart' ,  cartRoutes );
+
 
 module.exports = app;

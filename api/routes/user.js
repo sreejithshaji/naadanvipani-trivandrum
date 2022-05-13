@@ -1,63 +1,70 @@
-
-const Pool = require('pg').Pool
-
-  
-
 const express = require( 'express');
 const router  = express.Router();
+const {pool} = require('./db-functions/db')
 
 
 
 router.get('/' , (req , res , next ) =>{
-    res.status(200).json({
-        "message":"get request called at user.js"
+
+
+    const query = `SELECT id, full_name, house_name, street_name, pincode, district, block, created_at, modified_at
+	FROM public.users;`
+
+    pool.query(query, (error, results) => {
+        if (error) 
+        {
+            res.status(400).send(`error: ${error}`) 
+        }
+        else {
+            res.status(201).send(results.rows)
+        }
+        
     })
+
+
 });
 
 
-router.get('/:productId' , (req , res , next ) =>{
-    const poductId = req.params.productId;
-    res.status(200).json({
-        "message":"products : get user id is "+ poductId
+router.get('/:userID' , (req , res , next ) =>{
+    const userID = req.params.userID;
+    const query = `SELECT id, full_name, house_name, street_name, pincode, district, block, created_at, modified_at
+	FROM public.users WHERE id='${userID}' ;`
+    pool.query(query, (error, results) => {
+        if (error) 
+        {
+            res.status(400).send(`error: ${error}`) 
+        }
+        else{
+            res.status(201).send(results.rows[0])
+        }
+        
     })
-});
 
+});
 
 
 
 router.post('/' , async (req , res , next ) =>{
-
-    // SELECT id, full_name, house_name, street_name, pincode, district, block FROM public.users;
-
-    const pool = new Pool({
-        user: 'abcduser',
-        host: 'postgres-runner',
-        database: 'abcduser',
-        password: 'abcdpsw',
-        port: 5432,
-    })
-    
-    const client = await pool.connect();
     
     const { id, full_name , house_name, street_name, pincode, district, block  } = req.body
 
-    const query = `INSERT INTO public.users( id, full_name, house_name, street_name, pincode, district, block, created_at, modified_at) 
-    VALUES (${id}, ${full_name} , ${house_name}, ${street_name}, ${pincode}, ${district}, ${block});`;
+    console.log( id, full_name , house_name, street_name, pincode, district, block  )
 
-
-    // pool.query(query, (error, results) => {
-    //     if (error) 
-    //     {
-    //         throw error
-    //     }
-    //     res.status(201).send(`User added with ID: ${result.insertId}`)
-    // })
+    const query = `INSERT INTO public.users(
+        id, full_name, house_name, street_name, pincode, district, block , created_at)
+        VALUES (${id}, '${full_name}', '${house_name}', '${street_name}', '${pincode}', ${district}, ${block}, CURRENT_TIMESTAMP );`;
 
     
 
-    res.status(200).json({
-        "message":"post request called at products.js",
-        "data":`${id} ,${full_name} ${house_name}  `
+    pool.query(query, (error, results) => {
+        if (error) 
+        {
+            res.status(400).send(`error: ${error}`) 
+        }
+        else{
+            res.status(201).send(`User added with ID: ${id}`)
+        }
+        
     })
 
 });
@@ -65,18 +72,47 @@ router.post('/' , async (req , res , next ) =>{
 
 
 
+router.patch('/:userID' , (req , res , next ) =>{
 
-router.patch('/:productId' , (req , res , next ) =>{
-    res.status(200).json({
-        "message":"patch request called at products.js"
+    const userID = req.params.userID;
+
+    const { id, full_name , house_name, street_name, pincode, district, block  } = req.body
+
+    console.log( id, full_name , house_name, street_name, pincode, district, block  )
+    
+    const query =`UPDATE public.users
+                SET full_name='${full_name}', house_name='${house_name}', street_name='${street_name}', pincode='${pincode}', district=${district}, block=${block}, modified_at=CURRENT_TIMESTAMP
+                WHERE id='${userID}';`
+
+
+    pool.query(query, (error, results) => {
+        if (error) 
+        {
+            res.status(400).send(`error: ${error}`) 
+        }
+        else{
+            res.status(201).send(`User patched with ID: ${userID}`)
+        }
+        
     })
 });
 
 
 
-router.delete('/:productId' , (req , res , next ) =>{
-    res.status(200).json({
-        "message":"delete request called at products.js"
+router.delete('/:userID' , (req , res , next ) =>{
+
+    const userID = req.params.userID;
+
+    const query =`DELETE FROM public.users WHERE id='${userID}';`;
+
+    pool.query(query, (error, results) => {
+        if (error) 
+        {
+            res.status(400).send(`error: ${error}`) 
+        }
+        else{
+            res.status(201).send(`User deleted with ID: ${userID}`)
+        }
     })
 });
 

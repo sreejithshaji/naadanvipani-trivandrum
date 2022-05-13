@@ -1,51 +1,130 @@
 
 const express = require( 'express');
 const router  = express.Router();
-// the above lines will give us the ability to 
-// handle many routing features
+const {pool} = require('./db-functions/db')
 
-// the router.get will handle the get requests in the products.js ,
+
 router.get('/' , (req , res , next ) =>{
-    res.status(200).json({
-        "message":"get request called at products.js"
+
+    const query = `SELECT id, name, description, category, price, quantity, grade, discount_id, show_or_hide, stock, district, block, created_at, modified_at, image_url
+	FROM public.product;`
+
+    pool.query(query, (error, results) => {
+        if (error) 
+        {
+            res.status(400).send(`error: ${error}`) 
+        }
+        else {
+            res.status(201).send(results.rows)
+        }
+        
     })
+
 });
 
 
-// the below router `router.get('/:productId' ...`
-// will cath the get requests with a productId given to it 
-// this is used to return product details of the productId
 router.get('/:productId' , (req , res , next ) =>{
-    const poductId = req.params.productId;
+    const productId = req.params.productId;
 
-    res.status(200).json({
-        "message":"products : get product id is "+ poductId
+    const query = `SELECT id, name, description, category, price, quantity, grade, discount_id, show_or_hide, stock, district, block, created_at, image_url, modified_at
+	FROM public.product WHERE id='${productId}' ;`
+
+    pool.query(query, (error, results) => {
+        if (error) 
+        {
+            res.status(400).send(`error: ${error}`) 
+        }
+        else {
+            res.status(201).send(results.rows[0])
+        }
+        
     })
+
+    // res.status(200).json({
+    //     "message":"products : get product id is "+ productId
+    // })
 });
 
 
 
-// the router.post will handle the post requests in the products.js ,
+
 router.post('/' , (req , res , next ) =>{
-    // used to add new product
-    res.status(200).json({
-        "message":"post request called at products.js"
+
+    const { id, name, description, category, price, grade, show_or_hide, stock, district, block, image_url  } = req.body;
+
+    console.log( id, name, description, category, price, grade,  show_or_hide, stock, district, block, image_url );
+    // const query =`INSERT INTO public.product(id, name, description, category, price, quantity, grade, discount_id, show_or_hide, stock, district, block, created_at)
+    //     VALUES ( ${id}, '${name}', '${description}', '${category}', ${price}, ${quantity}, ${grade},  ${discount_id}, ${show_or_hide}, ${stock}, ${district}, ${block}, CURRENT_TIMESTAMP);`;
+
+    
+
+    const query= `INSERT INTO public.product(
+        id, name, description, category, price, grade, show_or_hide, stock, district, block, image_url, created_at)
+        VALUES ('${id}', '${name}', '${description}', '${category}', ${price}, ${grade}, ${show_or_hide}, ${stock}, ${district}, ${block}, '${image_url}', CURRENT_TIMESTAMP);`;
+        
+    pool.query(query, (error, results) => {
+            if (error) 
+            {
+                res.status(400).send(`error: ${error}`) 
+            }
+            else{
+                res.status(201).send(`Product added with ID: ${id}`)
+            }      
     })
 });
 
-// the router.patch will handle the patch requests in the products.js ,
+
+
 router.patch('/:productId' , (req , res , next ) =>{
-    // used to edit a product details 
-    res.status(200).json({
-        "message":"patch request called at products.js"
-    })
+
+    const productId = req.params.productId;
+    
+    const { id, name, description, category, price, grade, show_or_hide, stock, district, block, image_url  } = req.body;
+
+    console.log( id, name, description, category, price, grade,  show_or_hide, stock, district, block, image_url );
+    // const query =`INSERT INTO public.product(id, name, description, category, price, quantity, grade, discount_id, show_or_hide, stock, district, block, created_at)
+    //     VALUES ( ${id}, '${name}', '${description}', '${category}', ${price}, ${quantity}, ${grade},  ${discount_id}, ${show_or_hide}, ${stock}, ${district}, ${block}, CURRENT_TIMESTAMP);`;
+
+    const query= `UPDATE public.product
+	SET name= '${name}', description='${description}', category='${category}', price=${price},  grade=${grade}, show_or_hide=${show_or_hide}, stock=${stock}, district=${district}, block=${block}, image_url='${image_url}' ,modified_at=CURRENT_TIMESTAMP
+	WHERE id='${productId}';`;
+        
+        pool.query(query, (error, results) => {
+            if (error) 
+            {
+                res.status(400).send(`error: ${error}`) 
+            }
+            else{
+                res.status(201).send(`Product edited with ID: ${id}`)
+            }
+            
+        })    
+
 });
 
-// the router.delete will handle the delete requests in the products.js ,
+
+
 router.delete('/:productId' , (req , res , next ) =>{
-    res.status(200).json({
-        "message":"delete request called at products.js"
-    })
+
+    const productId = req.params.productId;
+
+    const query = `DELETE FROM public.product WHERE id='${productId}';`;
+
+    pool.query(query, (error, results) => {
+        if (error) 
+        {
+            res.status(400).send(`error: ${error}`) 
+        }
+        else{
+            
+            res.status(200).json({
+                "message":`deleted product with id ${productId}`
+            })
+        }
+        
+    })  
+
+
 });
 
 
