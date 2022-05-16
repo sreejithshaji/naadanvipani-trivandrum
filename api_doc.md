@@ -48,6 +48,17 @@ json array will get as response
 
 localhost:4000/products/
 
+
+## 1. GET - products with district and block
+
+localhost:4000/products/products-with-location/
+{
+    "district":1, 
+    "block":1
+}
+
+
+
 ## 2. GET - get single  products
 
 localhost:4000/products/wwjas
@@ -57,7 +68,6 @@ localhost:4000/products/wwjas
 localhost:4000/products/
 
 {
-    "id":"bla",
     "name":"kannappi",
     "description": "desc",
     "category": 1,
@@ -76,7 +86,6 @@ localhost:4000/products/
 localhost:4000/products/bla
 
 {
-    "id":"bla",
     "name":"kannappi222",
     "description": "des22c",
     "category": 1,
@@ -138,8 +147,98 @@ localhost:4000/cart/9746464356
 }
 
 
-## DELETE - to delete item with cRT ID 
+## DELETE - to delete item with cart ID 
 
 Here we need to send cart id not user id 
 
 localhost:4000/cart/9746464356165242237244717
+
+
+# Orders 
+## POST - to post new order
+post orders 
+
+order is placed only if the item is in the cart 
+
+`IMPORTANT : do the logic in the frontend , if the cart is empty do not show order button  `
+
+localhost:4000/orders/
+
+{
+  "user_id":"9746464356", 
+  "slot":"1",
+  "total_amount":10,
+  "status":1,
+  "payment_id":"test_payment"
+}
+
+
+
+## GET - to get orders for users with their phone number 
+
+localhost:4000/orders/9746464356
+## GET - to get all orders to deliver
+localhost:4000/orders/
+
+
+
+
+# delivery
+
+## GET - get delivery with body block and district 
+
+localhost:4000/delivery/
+
+{
+    "district":1,
+    "block":2
+}
+
+
+
+## GET - get delivery with body block and district 
+
+localhost:4000/delivery/
+
+{
+    "district":1,
+    "block":2
+}
+
+## GET - get delivery with body district 
+
+localhost:4000/delivery/districtwise/
+
+{
+    "district":1
+}
+
+
+## PATCH - to post delivered from delivery boy 
+
+localhost:4000/delivery/delivered/orderId
+
+
+## PATCH - to post delivered from delivery boy 
+
+localhost:4000/delivery/cancel/orderId
+
+## To get all order details with order id . 
+
+use order_details_table_id fot it 
+
+localhost:4000/delivery/get-product-with-order-id/9746464356165245350983064
+
+## To get all orders includes ordered , delivered, canceled
+
+localhost:4000/delivery/get-delivered-not-delivered-and-cancelled/
+{
+    "district":1,
+    "block":2,
+    "status":1
+}
+
+where use status : 
+// 1- order placed
+// 2- delivered
+// 3- canceled

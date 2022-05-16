@@ -29,13 +29,22 @@ router.get('/:userID' , (req , res , next ) =>{
     const userID = req.params.userID;
     const query = `SELECT id, full_name, house_name, street_name, pincode, district, block, created_at, modified_at
 	FROM public.users WHERE id='${userID}' ;`
+    // console.log("called user ")
     pool.query(query, (error, results) => {
         if (error) 
         {
             res.status(400).send(`error: ${error}`) 
         }
         else{
-            res.status(201).send(results.rows[0])
+            // console.log("results.rowslength : ", results.rows.length );
+            if (results.rows.length >0)
+            {
+                res.status(201).send(results.rows[0])
+            }
+            else {
+                res.status(201).send({"full_name":"notfound"})
+            }
+            
         }
         
     })
@@ -44,28 +53,113 @@ router.get('/:userID' , (req , res , next ) =>{
 
 
 
+
 router.post('/' , async (req , res , next ) =>{
     
     const { id, full_name , house_name, street_name, pincode, district, block  } = req.body
 
-    console.log( id, full_name , house_name, street_name, pincode, district, block  )
+    // if (checkExistance(id)){
+    //     console.log(" already user exists : ",id);
+    //     res.status(201).send({"already exists":true})
+    // }
+    // else{
 
-    const query = `INSERT INTO public.users(
-        id, full_name, house_name, street_name, pincode, district, block , created_at)
-        VALUES (${id}, '${full_name}', '${house_name}', '${street_name}', '${pincode}', ${district}, ${block}, CURRENT_TIMESTAMP );`;
+    //     console.log( id, full_name , house_name, street_name, pincode, district, block  )
 
-    
+    //     const query = `INSERT INTO public.users(
+    //         id, full_name, house_name, street_name, pincode, district, block , created_at)
+    //         VALUES (${id}, '${full_name}', '${house_name}', '${street_name}', '${pincode}', ${district}, ${block}, CURRENT_TIMESTAMP );`;
 
-    pool.query(query, (error, results) => {
-        if (error) 
+    //     pool.query(query, (error, results) => {
+    //         if (error) 
+    //         {
+    //             res.status(400).send(`error: ${error}`) 
+    //         }
+    //         else{
+                
+    //             res.status(201).send(req.body)
+    //         }
+            
+    //     })
+    // }
+
+    // -----------------------------
+
+    const patchUser = (existance) =>{
+        if(existance)
         {
-            res.status(400).send(`error: ${error}`) 
+            // const userID = id;
+            const { id, full_name , house_name, street_name, pincode, district, block  } = req.body
+            console.log( id, full_name , house_name, street_name, pincode, district, block  )
+            const query =`UPDATE public.users
+                        SET full_name='${full_name}', house_name='${house_name}', street_name='${street_name}', pincode='${pincode}', district=${district}, block=${block}, modified_at=CURRENT_TIMESTAMP
+                        WHERE id='${id}';`
+
+            pool.query(query, (error, results) => {
+                if (error) 
+                {
+                    res.status(400).send(`error: ${error}`) 
+                }
+                else{
+                    res.status(201).send(`User patched with ID: ${id}`)
+                }
+                
+            })
+
+        }
+        else
+        {
+            res.status(400).send(`user does not exists for user: ${id}`)
+        }   
+    }
+
+
+    const addUser = (existance) =>{
+        if(existance)
+        {
+            patchUser(existance)
         }
         else{
-            res.status(201).send(`User added with ID: ${id}`)
+            console.log( id, full_name , house_name, street_name, pincode, district, block  )
+
+            const query = `INSERT INTO public.users(
+                id, full_name, house_name, street_name, pincode, district, block , created_at)
+                VALUES (${id}, '${full_name}', '${house_name}', '${street_name}', '${pincode}', ${district}, ${block}, CURRENT_TIMESTAMP );`;
+
+            pool.query(query, (error, results) => {
+                if (error) 
+                {
+                    res.status(400).send(`error: ${error}`) 
+                }
+                else{
+                    res.status(201).send(req.body)
+                }
+                
+            })
         }
         
-    })
+    }
+
+    const checkExistance=(user_id)=>{
+        const query = `select exists(select 1 from public.users where id='${user_id}' )`;    
+        pool.query(query, (error, results) => {
+            if (error) 
+            {
+                res.status(400).send(`error: ${error}`) ;
+            }
+            else 
+            {   
+                console.log(" user exists ")
+                var res_row1= results.rows[0];
+                var alreadyExists = res_row1.exists;
+                console.log("existance : ", alreadyExists)
+                addUser(alreadyExists);
+            }
+        })
+    }
+
+    await checkExistance(id);
+
 
 });
 

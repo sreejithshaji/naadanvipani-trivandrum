@@ -11,8 +11,6 @@ const {pool} = require('./db-functions/db')
 
 
 
-
-
 function randomIdGenerator(userId){    
     const getUnixTime =  Math.floor(new Date().getTime() / 1000);
     const randomNumber = Math.floor(Math.random()*(90000-1+1)+1)
@@ -74,10 +72,29 @@ router.get('/:userId' , (req , res , next ) =>{
 
 router.post('/' , async (req , res , next ) =>{
 
-    // only add items to cart if it does not exists . Else not added 
-    
-
     const { product_id, quantity, user_id, ordered_or_not } = req.body;
+
+
+    // only add items to cart if it does not exists . Else not added 
+    const getCartItems = (userId) =>{            
+        const query = `SELECT cart_item.id, cart_item.product_id, cart_item.quantity, cart_item.user_id, cart_item.ordered_or_not, cart_item.created_at, cart_item.modified_at,
+        product.name, product.price, product.image_url
+        FROM public.cart_item JOIN product ON cart_item.product_id=product.id WHERE cart_item.user_id='${userId}' ;`
+
+
+        pool.query(query, (error, results) => {
+            if (error) 
+            {
+                res.status(400).send(`error: ${error}`) 
+            }
+            else {
+                res.status(201).send(results.rows)
+            }
+            
+        })
+
+    }
+
 
 
     const patchCart = (existance)=>{
@@ -93,14 +110,15 @@ router.post('/' , async (req , res , next ) =>{
                     res.status(400).send(`error: ${error}`) ;
                 }
                 else {
-                    res.status(201).send(`cart item edited with ID: ${user_id}`)
+                    // res.status(201).send(`post called at cart: edited with ID: ${user_id}`)
+                    getCartItems(user_id)
                 }
             })
 
         }
         else
         {
-            res.status(400).send(`cart item does not exists for user: ${user_id}`)
+            res.status(400).send(` cart item does not exists for user: ${user_id}`)
         }
     }
 
@@ -120,7 +138,7 @@ router.post('/' , async (req , res , next ) =>{
             
             const query = `INSERT INTO public.cart_item(
                 id, product_id, quantity, user_id, ordered_or_not, created_at)
-                VALUES ('${cart_id}', '${product_id}', ${quantity}, '${user_id}', ${ordered_or_not}, CURRENT_TIMESTAMP);`;
+                VALUES ('${cart_id}', '${product_id}', 1, '${user_id}', ${ordered_or_not}, CURRENT_TIMESTAMP);`;
                 
 
             pool.query(query, (error, results) => {
@@ -129,7 +147,8 @@ router.post('/' , async (req , res , next ) =>{
                     res.status(400).send(`error: ${error}`) 
                 }
                 else{
-                    res.status(201).send(`cart item added with ID: ${cart_id}`)
+                    // res.status(201).send(`cart item added with ID: ${cart_id}`)
+                    getCartItems(user_id)
                 }
                 
             })
@@ -230,7 +249,28 @@ router.patch('/:userId' , async (req , res , next ) =>{
 
 router.delete('/:cartId' , (req , res , next ) =>{
 
+
+
+    const getCartItems = (userId) =>{            
+        const query = `SELECT cart_item.id, cart_item.product_id, cart_item.quantity, cart_item.user_id, cart_item.ordered_or_not, cart_item.created_at, cart_item.modified_at,
+        product.name, product.price, product.image_url
+        FROM public.cart_item JOIN product ON cart_item.product_id=product.id WHERE cart_item.user_id='${userId}' ;`
+
+
+        pool.query(query, (error, results) => {
+            if (error) 
+            {
+                res.status(400).send(`error: ${error}`) 
+            }
+            else {
+                res.status(201).send(results.rows)
+            }  
+        })
+    }
+
     const cartId = req.params.cartId;
+    
+    const {  user_id } = req.body;
 
     const query = `DELETE FROM public.cart_item
 	WHERE id='${cartId}' ;`
@@ -242,7 +282,8 @@ router.delete('/:cartId' , (req , res , next ) =>{
             res.status(400).send(`error: ${error}`) 
         }
         else {
-            res.status(201).send(`cart item deleted with id: ${cartId}`)
+            // res.status(201).send(`cart item deleted with id: ${cartId}`)
+            getCartItems(user_id)
         }
         
     })
