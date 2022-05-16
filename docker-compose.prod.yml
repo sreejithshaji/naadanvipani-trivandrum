@@ -17,6 +17,6 @@ services:
     environment:
       # - POSTGRES_USER=abcduser
       # - POSTGRES_PASSWORD=abcdpsw
-      TEST=test
+      - TEST=test
     volumes:
-      - /home/ubuntu/naadanvipani/naadanvipani-trivandrum/postgres-db-volume/:/var/lib/postgresql/data
+      - /home/ubuntu/horticorp-online-vipani/postgres-db-volume/:/var/lib/postgresql/data
