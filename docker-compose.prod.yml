@@ -15,8 +15,8 @@ services:
     ports:
       - "5432:5432"
     environment:
-      # - POSTGRES_USER=abcduser
-      # - POSTGRES_PASSWORD=abcdpsw
+      - POSTGRES_USER=abcduser
+      - POSTGRES_PASSWORD=abcdpsw
       - TEST=test
     volumes:
       - /home/ubuntu/horticorp-online-vipani/postgres-db-volume/:/var/lib/postgresql/data
