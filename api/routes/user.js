@@ -7,7 +7,7 @@ const {pool} = require('./db-functions/db')
 router.get('/' , (req , res , next ) =>{
 
 
-    const query = `SELECT id, full_name, house_name, street_name, pincode, district, block, created_at, modified_at
+    const query = `SELECT id, full_name, house_name, street_name, pincode, district, block, created_at, modified_at, delivery_point
 	FROM public.users;`
 
     pool.query(query, (error, results) => {
@@ -27,7 +27,7 @@ router.get('/' , (req , res , next ) =>{
 
 router.get('/:userID' , (req , res , next ) =>{
     const userID = req.params.userID;
-    const query = `SELECT id, full_name, house_name, street_name, pincode, district, block, created_at, modified_at
+    const query = `SELECT id, full_name, house_name, street_name, pincode, district, block, created_at, modified_at, delivery_point
 	FROM public.users WHERE id='${userID}' ;`
     // console.log("called user ")
     pool.query(query, (error, results) => {
@@ -56,7 +56,7 @@ router.get('/:userID' , (req , res , next ) =>{
 
 router.post('/' , async (req , res , next ) =>{
     
-    const { id, full_name , house_name, street_name, pincode, district, block  } = req.body
+    const { id, full_name , house_name, street_name, pincode, district, block, delivery_point  } = req.body
 
     // if (checkExistance(id)){
     //     console.log(" already user exists : ",id);
@@ -89,10 +89,10 @@ router.post('/' , async (req , res , next ) =>{
         if(existance)
         {
             // const userID = id;
-            const { id, full_name , house_name, street_name, pincode, district, block  } = req.body
-            console.log( id, full_name , house_name, street_name, pincode, district, block  )
+            const { id, full_name , house_name, street_name, pincode, district, block ,delivery_point } = req.body
+            console.log( id, full_name , house_name, street_name, pincode, district, block, delivery_point  )
             const query =`UPDATE public.users
-                        SET full_name='${full_name}', house_name='${house_name}', street_name='${street_name}', pincode='${pincode}', district=${district}, block=${block}, modified_at=CURRENT_TIMESTAMP
+                        SET full_name='${full_name}', house_name='${house_name}', street_name='${street_name}', pincode='${pincode}', district=${district}, block=${block}, delivery_point=${delivery_point} ,modified_at=CURRENT_TIMESTAMP
                         WHERE id='${id}';`
 
             pool.query(query, (error, results) => {
@@ -170,9 +170,9 @@ router.patch('/:userID' , (req , res , next ) =>{
 
     const userID = req.params.userID;
 
-    const { id, full_name , house_name, street_name, pincode, district, block  } = req.body
+    const { id, full_name , house_name, street_name, pincode, district, block, delivery_point  } = req.body
 
-    console.log( id, full_name , house_name, street_name, pincode, district, block  )
+    console.log( id, full_name , house_name, street_name, pincode, district, block,delivery_point  )
     
     const query =`UPDATE public.users
                 SET full_name='${full_name}', house_name='${house_name}', street_name='${street_name}', pincode='${pincode}', district=${district}, block=${block}, modified_at=CURRENT_TIMESTAMP

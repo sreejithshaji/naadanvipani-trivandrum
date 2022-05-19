@@ -46,7 +46,7 @@ router.post('/products-with-location/' , (req , res , next ) =>{
     const { district, block } = req.body;
     // console.log(district, block)
 
-    const query = `SELECT id, name, description, category, price, quantity, grade, discount_id, show_or_hide, stock, district, block, created_at, modified_at, image_url
+    const query = `SELECT id, name, description, category, price, quantity, grade, discount_id, show_or_hide, stock, district, block, created_at, modified_at, image_url , minimum_quantity
 	FROM public.product WHERE district=${district} ;`
 
     pool.query(query, (error, results) => {
