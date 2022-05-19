@@ -91,17 +91,17 @@ router.get('/:productId' , (req , res , next ) =>{
 
 router.post('/' , (req , res , next ) =>{
 
-    const { name, description, category, price, grade, show_or_hide, stock, district, block, image_url  } = req.body;
+    const { name, description, category, price, grade, show_or_hide, stock, district, block, image_url, minimum_quantity  } = req.body;
 
-    console.log( name, description, category, price, grade,  show_or_hide, stock, district, block, image_url );
+    console.log( name, description, category, price, grade,  show_or_hide, stock, district, block, image_url, minimum_quantity );
     // const query =`INSERT INTO public.product(id, name, description, category, price, quantity, grade, discount_id, show_or_hide, stock, district, block, created_at)
     //     VALUES ( ${id}, '${name}', '${description}', '${category}', ${price}, ${quantity}, ${grade},  ${discount_id}, ${show_or_hide}, ${stock}, ${district}, ${block}, CURRENT_TIMESTAMP);`;
 
     const id = randomIdGenerator(name)
 
     const query= `INSERT INTO public.product(
-        id, name, description, category, price, grade, show_or_hide, stock, district, block, image_url, created_at)
-        VALUES ('${id}', '${name}', '${description}', '${category}', ${price}, ${grade}, ${show_or_hide}, ${stock}, ${district}, ${block}, '${image_url}', CURRENT_TIMESTAMP);`;
+        id, name, description, category, price, grade, show_or_hide, stock, district, block, image_url, created_at, minimum_quantity)
+        VALUES ('${id}', '${name}', '${description}', '${category}', ${price}, ${grade}, ${show_or_hide}, ${stock}, ${district}, ${block}, '${image_url}', ${minimum_quantity}, CURRENT_TIMESTAMP);`;
         
     pool.query(query, (error, results) => {
             if (error) 
@@ -120,14 +120,14 @@ router.patch('/:productId' , (req , res , next ) =>{
 
     const productId = req.params.productId;
     
-    const { id, name, description, category, price, grade, show_or_hide, stock, district, block, image_url  } = req.body;
+    const { id, name, description, category, price, grade, show_or_hide, stock, district, block, image_url, minimum_quantity  } = req.body;
 
-    console.log( id, name, description, category, price, grade,  show_or_hide, stock, district, block, image_url );
+    console.log( id, name, description, category, price, grade,  show_or_hide, stock, district, block, image_url, minimum_quantity );
     // const query =`INSERT INTO public.product(id, name, description, category, price, quantity, grade, discount_id, show_or_hide, stock, district, block, created_at)
     //     VALUES ( ${id}, '${name}', '${description}', '${category}', ${price}, ${quantity}, ${grade},  ${discount_id}, ${show_or_hide}, ${stock}, ${district}, ${block}, CURRENT_TIMESTAMP);`;
 
     const query= `UPDATE public.product
-	SET name= '${name}', description='${description}', category='${category}', price=${price},  grade=${grade}, show_or_hide=${show_or_hide}, stock=${stock}, district=${district}, block=${block}, image_url='${image_url}' ,modified_at=CURRENT_TIMESTAMP
+	SET name= '${name}', description='${description}', category='${category}', price=${price},  grade=${grade}, show_or_hide=${show_or_hide}, stock=${stock}, district=${district}, block=${block}, image_url='${image_url}' ,modified_at=CURRENT_TIMESTAMP, minimum_quantity=${minimum_quantity}
 	WHERE id='${productId}';`;
         
         pool.query(query, (error, results) => {
