@@ -25,7 +25,7 @@ function randomIdGenerator(parameter_to_add){
 router.get('/' , (req , res , next ) =>{
 
 
-    const query = `SELECT id, name, description, category, price, quantity, grade, discount_id, show_or_hide, stock, district, block, created_at, modified_at, image_url
+    const query = `SELECT id, name, description, category, price, quantity, grade, discount_id, show_or_hide, stock, minimum_quantity, district, block, created_at, modified_at, image_url
 	FROM public.product;`
 
     pool.query(query, (error, results) => {
@@ -46,7 +46,7 @@ router.post('/products-with-location/' , (req , res , next ) =>{
     const { district, block } = req.body;
     // console.log(district, block)
 
-    const query = `SELECT id, name, description, category, price, quantity, grade, discount_id, show_or_hide, stock, district, block, created_at, modified_at, image_url , minimum_quantity
+    const query = `SELECT id, name, image_url, description, category, price, quantity, grade, discount_id, show_or_hide, stock, minimum_quantity, district, block, created_at, modified_at
 	FROM public.product WHERE district=${district} ;`
 
     pool.query(query, (error, results) => {
@@ -67,7 +67,7 @@ router.post('/products-with-location/' , (req , res , next ) =>{
 router.get('/:productId' , (req , res , next ) =>{
     const productId = req.params.productId;
 
-    const query = `SELECT id, name, description, category, price, quantity, grade, discount_id, show_or_hide, stock, district, block, created_at, image_url, modified_at
+    const query = `SELECT id, name, description, category, price, quantity, grade, discount_id, show_or_hide, stock, minimum_quantity, district, block, created_at, image_url, modified_at
 	FROM public.product WHERE id='${productId}' ;`
 
     pool.query(query, (error, results) => {
@@ -100,8 +100,8 @@ router.post('/' , (req , res , next ) =>{
     const id = randomIdGenerator(name)
 
     const query= `INSERT INTO public.product(
-        id, name, description, category, price, grade, show_or_hide, stock, district, block, image_url, created_at, minimum_quantity)
-        VALUES ('${id}', '${name}', '${description}', '${category}', ${price}, ${grade}, ${show_or_hide}, ${stock}, ${district}, ${block}, '${image_url}', ${minimum_quantity}, CURRENT_TIMESTAMP);`;
+        id, name, description, category, price, grade, show_or_hide, stock, minimum_quantity, district, block, image_url, created_at)
+        VALUES ('${id}', '${name}', '${description}', '${category}', ${price}, ${grade}, ${show_or_hide}, ${stock}, ${minimum_quantity}, ${district}, ${block}, '${image_url}', CURRENT_TIMESTAMP);`;
         
     pool.query(query, (error, results) => {
             if (error) 
@@ -127,7 +127,7 @@ router.patch('/:productId' , (req , res , next ) =>{
     //     VALUES ( ${id}, '${name}', '${description}', '${category}', ${price}, ${quantity}, ${grade},  ${discount_id}, ${show_or_hide}, ${stock}, ${district}, ${block}, CURRENT_TIMESTAMP);`;
 
     const query= `UPDATE public.product
-	SET name= '${name}', description='${description}', category='${category}', price=${price},  grade=${grade}, show_or_hide=${show_or_hide}, stock=${stock}, district=${district}, block=${block}, image_url='${image_url}' ,modified_at=CURRENT_TIMESTAMP, minimum_quantity=${minimum_quantity}
+	SET name= '${name}', description='${description}', category='${category}', price=${price},  grade=${grade}, show_or_hide=${show_or_hide}, stock=${stock}, minimum_quantity=${minimum_quantity} , district=${district}, block=${block}, image_url='${image_url}' ,modified_at=CURRENT_TIMESTAMP
 	WHERE id='${productId}';`;
         
         pool.query(query, (error, results) => {

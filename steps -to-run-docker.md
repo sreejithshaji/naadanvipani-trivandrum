@@ -4,11 +4,17 @@ cd /horticorp-vipani/
 
 ls
 
-here `naadanvipani-trivandrum` is the backend file 
+here `naadanvipani-backend` is the backend file 
+
+cd to `naadanvipani-backend`
+
+ls will give `naadanvipani-trivandrum` which is our backend 
+
+
 
 delete that file 
 
-git clone https://github.com/sreejithshaji/naadan-vipani-trivandrum.git -b master
+ git clone "https://github.com/sreejithshaji/naadanvipani-trivandrum.git" -b master
 
  sudo docker-compose -f docker-compose.prod.yml down -v
 
