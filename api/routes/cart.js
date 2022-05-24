@@ -138,7 +138,7 @@ router.post('/' , async (req , res , next ) =>{
             
             const query = `INSERT INTO public.cart_item(
                 id, product_id, quantity, user_id, ordered_or_not, created_at)
-                VALUES ('${cart_id}', '${product_id}', 1, '${user_id}', ${ordered_or_not}, CURRENT_TIMESTAMP);`;
+                VALUES ('${cart_id}', '${product_id}', ${quantity}, '${user_id}', ${ordered_or_not}, CURRENT_TIMESTAMP);`;
                 
 
             pool.query(query, (error, results) => {

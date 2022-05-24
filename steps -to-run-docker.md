@@ -18,4 +18,4 @@ delete that file
 
  sudo docker-compose -f docker-compose.prod.yml down -v
 
- sudo docker-compose -f docker-compose.prod.yml up -d
+ sudo docker-compose -f docker-compose.prod.yml up -d --build
